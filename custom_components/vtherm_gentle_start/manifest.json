@@ -1,0 +1,19 @@
+{
+  "domain": "vtherm_gentle_start",
+  "name": "Versatile Thermostat Gentle Start",
+  "codeowners": [
+    "@timothyjward"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "versatile_thermostat"
+  ],
+  "documentation": "https://github.com/timothyjward/vtherm_gentle_start",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/timothyjward/vtherm_gentle_start/issues",
+  "requirements": [
+    "vtherm_api>=0.8.0"
+  ],
+  "version": "0.1.0"
+}

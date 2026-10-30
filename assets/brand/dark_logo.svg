@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 256" width="720" height="256">
+  <title>Versatile Thermostat Gentle Start</title>
+  <g>
+  <defs>
+    <linearGradient id="ramp" gradientUnits="userSpaceOnUse" x1="44" y1="0" x2="212" y2="0">
+      <stop offset="0" stop-color="#5BC0EB"/>
+      <stop offset="0.5" stop-color="#F6D675"/>
+      <stop offset="1" stop-color="#FF8A3D"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#1B3A4B"/>
+  <!-- the target the setpoint is heading to -->
+  <line x1="44" y1="118" x2="212" y2="118" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12"/>
+  <!-- the setpoint: small equal steps up to the target -->
+  <path d="M44 190 H84 V166 H124 V142 H164 V118 H206" fill="none" stroke="url(#ramp)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="212" cy="118" r="13" fill="#FF8A3D"/>
+
+</g>
+  <text x="288" y="132" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="68" font-weight="700" fill="#FFFFFF">Gentle Start</text>
+  <text x="290" y="176" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" font-weight="400" fill="#FFFFFF" fill-opacity="0.75">for Versatile Thermostat</text>
+</svg>

@@ -1,0 +1,8 @@
+{
+  "name": "Versatile Thermostat Gentle Start",
+  "render_readme": true,
+  "homeassistant": "2025.8.0",
+  "hacs": "2.0.5",
+  "zip_release": true,
+  "filename": "vtherm_gentle_start.zip"
+}

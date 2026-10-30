@@ -1,0 +1,37 @@
+{
+  "title": "Versatile Thermostat Gentle Start",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gentle Start : thermostat cible",
+        "data": {
+          "target_vtherm_unique_id": "Entité VTherm cible",
+          "start_offset": "Décalage de départ",
+          "max_step": "Pas maximum par cycle"
+        },
+        "data_description": {
+          "start_offset": "À la mise en marche du thermostat, la première consigne envoyée est la température de la pièce plus ce décalage en chauffage (moins ce décalage en refroidissement), sans jamais dépasser la cible. Une valeur négative donne un démarrage plus doux, une valeur positive un démarrage plus fort.",
+          "max_step": "Variation maximale de la consigne par cycle, en degrés, dans le sens qui augmente la demande. Une cible plus basse est envoyée immédiatement. 0 signifie aucune limite."
+        }
+      },
+      "reconfigure": {
+        "title": "Gentle Start : options",
+        "data": {
+          "start_offset": "Décalage de départ",
+          "max_step": "Pas maximum par cycle"
+        },
+        "data_description": {
+          "start_offset": "À la mise en marche du thermostat, la première consigne envoyée est la température de la pièce plus ce décalage en chauffage (moins ce décalage en refroidissement), sans jamais dépasser la cible. Une valeur négative donne un démarrage plus doux, une valeur positive un démarrage plus fort.",
+          "max_step": "Variation maximale de la consigne par cycle, en degrés, dans le sens qui augmente la demande. Une cible plus basse est envoyée immédiatement. 0 signifie aucune limite."
+        }
+      }
+    },
+    "error": {
+      "invalid_entity": "L'entité sélectionnée n'est pas un Versatile Thermostat valide."
+    },
+    "abort": {
+      "already_configured": "Ce thermostat est déjà configuré.",
+      "reconfigure_successful": "Configuration mise à jour."
+    }
+  }
+}

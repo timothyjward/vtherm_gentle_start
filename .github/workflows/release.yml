@@ -1,0 +1,43 @@
+---
+name: Release
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+permissions: {}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: "Set version number from trigger's tag"
+        run: |
+          yq -i -o json '.version="${{ github.ref_name }}"' \
+          "${{ github.workspace }}/custom_components/vtherm_gentle_start/manifest.json"
+
+      - name: Create ZIP
+        run: |
+          cd custom_components/vtherm_gentle_start
+          zip -r ../../vtherm_gentle_start.zip .
+
+      # Published as a pre-release: promote it by hand on GitHub when it is ready
+      - name: Create Release
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: true
+          generate_release_notes: true
+          files: vtherm_gentle_start.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

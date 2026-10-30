@@ -1,0 +1,37 @@
+{
+  "title": "Versatile Thermostat Gentle Start",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gentle Start: target thermostat",
+        "data": {
+          "target_vtherm_unique_id": "Target VTherm entity",
+          "start_offset": "Start offset",
+          "max_step": "Maximum step per cycle"
+        },
+        "data_description": {
+          "start_offset": "When the thermostat is switched on, the first setpoint sent is the room temperature plus this offset when heating (minus it when cooling), never beyond the target. A negative value gives a gentler start, a positive value a stronger one.",
+          "max_step": "Maximum change of the setpoint per cycle, in degrees, in the direction that increases the demand. A lower target is sent at once. 0 means no limit."
+        }
+      },
+      "reconfigure": {
+        "title": "Gentle Start: options",
+        "data": {
+          "start_offset": "Start offset",
+          "max_step": "Maximum step per cycle"
+        },
+        "data_description": {
+          "start_offset": "When the thermostat is switched on, the first setpoint sent is the room temperature plus this offset when heating (minus it when cooling), never beyond the target. A negative value gives a gentler start, a positive value a stronger one.",
+          "max_step": "Maximum change of the setpoint per cycle, in degrees, in the direction that increases the demand. A lower target is sent at once. 0 means no limit."
+        }
+      }
+    },
+    "error": {
+      "invalid_entity": "The selected entity is not a valid Versatile Thermostat."
+    },
+    "abort": {
+      "already_configured": "This thermostat is already configured.",
+      "reconfigure_successful": "Configuration updated."
+    }
+  }
+}
