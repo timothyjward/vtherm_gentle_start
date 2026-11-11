@@ -6,6 +6,7 @@ import asyncio
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
+from homeassistant.const import Platform
 from homeassistant.core import CoreState, HomeAssistant
 from homeassistant.helpers import config_validation as cv
 
@@ -14,6 +15,8 @@ from vtherm_api.vtherm_api import VThermAPI
 
 from .const import CONF_TARGET_VTHERM, DOMAIN, FEATURE_MANAGER_GENTLE_START, VT_DOMAIN
 from .factory import GentleStartManagerFactory
+
+PLATFORMS = [Platform.SENSOR]
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -81,6 +84,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if not _register_factory(hass):
         return False
 
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
     # At startup the core picks the factory up when the thermostats start. Later it has to be asked to, once per entry:
     # the entry is also set up again when its options change, and the options are read when they are used.
     attached = _attached(hass)
@@ -93,10 +98,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a vtherm_gentle_start config entry."""
+    unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     remaining = [other for other in hass.config_entries.async_entries(DOMAIN) if other.entry_id != entry.entry_id]
-    if not remaining:
+    if unloaded and not remaining:
         _unregister_factory(hass)
-    return True
+    return unloaded
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:

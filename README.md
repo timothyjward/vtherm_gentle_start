@@ -71,7 +71,33 @@ The thermostat shows a `gentle_start` section:
 
 * `start_offset` and `max_step`: the options.
 * `ramp_value`: the setpoint the ramp currently sends, empty when no ramp is in progress.
+* `ramp_target`: the regulated temperature the ramp is heading for, empty when no ramp is in progress. The `regulated_target_temperature` attribute of the thermostat itself shows the adjusted setpoint, which is the same as `ramp_value`, so it cannot be used for this.
 * `action`: what the ramp did at its last step: `start`, `up`, `reached` (the setpoint is the regulated temperature), `hold` or `down` (the demand was lowered: the setpoint went down when heating, and up when cooling).
+
+## Adjustment sensor
+
+Each entry also creates a sensor, named after the thermostat (for example `Master bedroom gentle start adjustment`). Home Assistant keeps one device per integration entry, so the sensor is on its own device, `<thermostat> Gentle Start`, which is shown as connected to the thermostat. Its state is `ramp_value` minus `ramp_target`, in degrees: how far the ramp is holding the setpoint back. It is `0.0` when no ramp is in progress or when the ramp has reached the regulated temperature, and unknown when the thermostat is unavailable. The `action` attribute repeats the last step of the ramp.
+
+* Heating: the value is negative while the setpoint rises towards the regulated temperature, and the icon is `mdi:stairs-up`.
+* Cooling: the value is positive while the setpoint falls towards the regulated temperature, and the icon is `mdi:stairs-down`.
+* No adjustment: the icon is `mdi:stairs`.
+
+To show it on a dashboard only while the ramp is adjusting, add it as a badge of a heading card, hidden when it is `0.0` (replace the entity id with the one of your sensor, for example `sensor.master_bedroom_gentle_start_adjustment` for a thermostat named "Master bedroom"):
+
+```yaml
+type: heading
+heading: Master bedroom
+badges:
+  - type: entity
+    entity: sensor.master_bedroom_gentle_start_adjustment
+    visibility:
+      - condition: state
+        entity: sensor.master_bedroom_gentle_start_adjustment
+        state_not:
+          - "0.0"
+          - unknown
+          - unavailable
+```
 
 ## Development
 

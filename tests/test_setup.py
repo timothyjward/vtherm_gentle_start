@@ -9,6 +9,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from homeassistant.config_entries import ConfigEntryState
+from homeassistant.const import Platform
 from homeassistant.core import CoreState, HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from vtherm_api.vtherm_api import VThermAPI
@@ -29,6 +30,15 @@ def add_plugin_entry(hass: HomeAssistant, target: str) -> MockConfigEntry:
     entry = MockConfigEntry(domain=DOMAIN, data={CONF_TARGET_VTHERM: target, CONF_START_OFFSET: -0.5, CONF_MAX_STEP: 1.0})
     entry.add_to_hass(hass)
     return entry
+
+
+@pytest.fixture(autouse=True)
+def forward_fixture(hass: HomeAssistant):
+    """These tests call the setup directly, on entries which Home Assistant is not setting up: the platforms are not forwarded."""
+    with patch.object(hass.config_entries, "async_forward_entry_setups", new=AsyncMock()) as forward, patch.object(
+        hass.config_entries, "async_unload_platforms", new=AsyncMock(return_value=True)
+    ):
+        yield forward
 
 
 @pytest.fixture(name="reload")
@@ -138,3 +148,20 @@ async def test_removing_an_entry_while_home_assistant_stops_reloads_nothing(hass
     await async_remove_entry(hass, entry)
     await hass.async_block_till_done()
     reload.assert_not_awaited()
+
+
+async def test_the_sensor_platform_is_forwarded(hass: HomeAssistant, forward_fixture: AsyncMock) -> None:
+    """The sensor is created by the platform of the entry."""
+    add_vtherm(hass, "vt-living")
+    entry = add_plugin_entry(hass, "vt-living")
+    assert await async_setup_entry(hass, entry)
+    forward_fixture.assert_awaited_once_with(entry, [Platform.SENSOR])
+
+
+async def test_a_failed_platform_unload_keeps_the_factory(hass: HomeAssistant) -> None:
+    """The factory is only unregistered when the entry has really been unloaded."""
+    entry = add_plugin_entry(hass, "vt-living")
+    assert await async_setup_entry(hass, entry)
+    with patch.object(hass.config_entries, "async_unload_platforms", new=AsyncMock(return_value=False)):
+        assert await async_unload_entry(hass, entry) is False
+    assert VThermAPI.get_vtherm_api(hass).get_feature_manager(FEATURE_MANAGER_GENTLE_START) is not None

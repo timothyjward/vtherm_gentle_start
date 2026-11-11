@@ -10,6 +10,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
+from homeassistant.core import State
 
 from vtherm_api import InterfaceSetpointModifier
 from vtherm_api.interfaces import InterfaceFeatureManager
@@ -27,6 +28,7 @@ from custom_components.vtherm_gentle_start.const import (
 )
 from custom_components.vtherm_gentle_start.factory import GentleStartManagerFactory
 from custom_components.vtherm_gentle_start.manager import GentleStartFeatureManager
+from custom_components.vtherm_gentle_start.sensor import adjustment_of
 
 START = datetime(2026, 1, 1, 8, 0, tzinfo=timezone.utc)
 
@@ -145,7 +147,25 @@ def test_attributes() -> None:
     manager.adjust_regulated_temperature(21, 0.5, None)
     attributes: dict = {}
     manager.add_custom_attributes(attributes)
-    assert attributes[ATTR_GENTLE_START_SECTION] == {"start_offset": -0.5, "max_step": 1.0, "ramp_value": 17.5, "action": "start"}
+    assert attributes[ATTR_GENTLE_START_SECTION] == {"start_offset": -0.5, "max_step": 1.0, "ramp_value": 17.5, "ramp_target": 21, "action": "start"}
+
+
+def test_the_ramp_target_is_published_only_while_a_ramp_is_in_progress() -> None:
+    """The regulated temperature the ramp heads for is shown with the ramp, and forgotten with it."""
+    manager, thermostat = make_manager()
+    attributes: dict = {}
+    manager.add_custom_attributes(attributes)
+    assert attributes[ATTR_GENTLE_START_SECTION]["ramp_target"] is None
+
+    manager.adjust_regulated_temperature(21.5, 0.5, None)
+    manager.add_custom_attributes(attributes)
+    assert attributes[ATTR_GENTLE_START_SECTION]["ramp_target"] == 21.5
+
+    thermostat.vtherm_hvac_mode = "off"
+    manager.adjust_regulated_temperature(21.5, 0.5, None)
+    manager.add_custom_attributes(attributes)
+    assert attributes[ATTR_GENTLE_START_SECTION]["ramp_value"] is None
+    assert attributes[ATTR_GENTLE_START_SECTION]["ramp_target"] is None
 
 
 def run_cycles(manager: GentleStartFeatureManager, thermostat: SimpleNamespace, rooms: list[float], slope: float | None) -> list[float]:
@@ -291,3 +311,60 @@ def test_factory_creates_a_manager() -> None:
     assert str(manager) == "Living room"
     assert manager.name == "gentle_start"
     assert manager.hass is thermostat.hass
+
+
+# ----------------------------------------------------------------------
+# Contract with the adjustment sensor: it reads the attributes the manager publishes
+# ----------------------------------------------------------------------
+def published_state(manager: GentleStartFeatureManager, mode: str, regulated: float) -> State:
+    """The state a thermostat would show: its regulated temperature and the attributes the manager adds."""
+    attributes: dict = {"regulated_target_temperature": regulated}
+    manager.add_custom_attributes(attributes)
+    # The thermostat shows the adjusted setpoint as its regulated temperature: the sensor must not depend on it
+    if attributes.get(ATTR_GENTLE_START_SECTION, {}).get("ramp_value") is not None:
+        attributes["regulated_target_temperature"] = attributes[ATTR_GENTLE_START_SECTION]["ramp_value"]
+    return State("climate.living_room", mode, attributes)
+
+
+@pytest.mark.parametrize(
+    ("mode", "rooms", "target", "expected"),
+    [
+        # Heating: the setpoint rises towards the target, so the adjustment is negative and shrinks to 0
+        ("heat", [18.0, 19.0, 20.0, 20.5, 20.8], 21.0, [-3.5, -2.5, -1.5, -0.5, 0.0]),
+        # Cooling is the mirror: positive, and shrinking to 0
+        ("cool", [26.0, 25.0, 24.0, 23.6, 23.2], 23.0, [3.5, 2.5, 1.5, 0.5, 0.0]),
+    ],
+)
+def test_the_sensor_reads_what_the_manager_publishes(mode: str, rooms: list[float], target: float, expected: list[float]) -> None:
+    """The adjustment follows the ramp over its steps, whichever way it goes."""
+    manager, thermostat = make_manager(mode=mode)
+    thermostat.target_temperature = target
+    thermostat.cycle_min = 5
+    values = []
+    for step, room in enumerate(rooms):
+        thermostat.current_temperature = room
+        thermostat.now = START + timedelta(minutes=5 * step)
+        manager.adjust_regulated_temperature(target, 0.5, None)
+        values.append(adjustment_of(published_state(manager, mode, target)))
+    assert values == expected
+
+
+def test_the_sensor_is_zero_when_no_ramp_is_in_progress() -> None:
+    """A thermostat which has not started a ramp shows 0, and one without the plugin shows nothing."""
+    manager, _ = make_manager()
+    assert adjustment_of(published_state(manager, "heat", 21.0)) == 0.0
+    unconfigured, _ = make_manager(entries=[])
+    assert adjustment_of(published_state(unconfigured, "heat", 21.0)) is None
+
+
+def test_the_sensor_reads_a_ramp_restored_after_a_restart() -> None:
+    """A manager which resumes a ramp from the old state gives the same adjustment as before the restart."""
+    manager, _ = make_manager()
+    manager.adjust_regulated_temperature(21, 0.5, None)
+    before = published_state(manager, "heat", 21.0)
+
+    restarted, _ = make_manager()
+    restarted.restore_state(before)
+    # The restored setpoint is taken up by the next cycle, which sends it again: the ramp has not restarted from the offset
+    assert restarted.adjust_regulated_temperature(21, 0.5, None) == 17.5
+    assert adjustment_of(published_state(restarted, "heat", 21.0)) == adjustment_of(before) == -3.5

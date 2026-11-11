@@ -46,6 +46,8 @@ class GentleStartFeatureManager:
         self._ramp = SetpointRamp()
         self._step_warning_logged = False
         self._active_listener: list = []
+        #: The regulated temperature the ramp is heading for: the value the thermostat gave at the last adjustment.
+        self._desired: float | None = None
 
     # ------------------------------------------------------------------
     # Lifecycle (InterfaceFeatureManager contract)
@@ -112,6 +114,8 @@ class GentleStartFeatureManager:
             "start_offset": self._option(CONF_START_OFFSET, DEFAULT_START_OFFSET),
             "max_step": self._option(CONF_MAX_STEP, DEFAULT_MAX_STEP),
             "ramp_value": self._ramp.value,
+            # The thermostat shows the adjusted setpoint as its regulated temperature, so the value the ramp heads for is published here
+            "ramp_target": self._desired if self._ramp.value is not None else None,
             "action": self._ramp.action,
         }
 
@@ -123,6 +127,7 @@ class GentleStartFeatureManager:
         mode = self._mode
         if not self.is_configured or not is_ramp_mode(mode):
             self._ramp.reset()
+            self._desired = None
             return desired
 
         max_step = self._option(CONF_MAX_STEP, DEFAULT_MAX_STEP)
@@ -136,6 +141,7 @@ class GentleStartFeatureManager:
             )
             self._step_warning_logged = True
 
+        self._desired = desired
         return self._ramp.adjust(
             desired,
             regulation_step,
