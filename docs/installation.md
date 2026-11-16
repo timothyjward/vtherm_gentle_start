@@ -15,7 +15,7 @@ The plugin is not in the default HACS store, so add it as a custom repository.
 2. Add `https://github.com/timothyjward/vtherm_gentle_start` with the category **Integration**.
 3. Install **Versatile Thermostat Gentle Start** and restart Home Assistant.
 
-A release can be published as a pre-release. If HACS shows no version to install, open the page of the repository in HACS, open the menu and enable **Show beta versions**.
+HACS installs the latest release. A release is first published as a pre-release, which HACS offers only when **Show beta versions** is enabled on the page of the repository, and it is promoted to a release when it is ready.
 
 To update, use the update entry of HACS and restart Home Assistant. Restart after every update: a new version can add entities, and Home Assistant creates them when the entry is set up.
 
