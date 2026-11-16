@@ -1,4 +1,6 @@
-"""Tests of the setup of the entries: the thermostat they target has to be reloaded to take the plugin up while Home Assistant runs."""
+"""Tests of the setup of the entries: the thermostat they target has to be reloaded to take the plugin up while Home Assistant runs.
+
+These tests keep a second thermostat loaded, so that the reload is the plain one: the only thermostat is covered in test_registration."""
 
 # pylint: disable=protected-access
 
@@ -58,6 +60,7 @@ async def test_adding_an_entry_reloads_only_the_thermostat_it_targets(hass: Home
 
 async def test_the_factory_is_registered_before_the_thermostat_is_reloaded(hass: HomeAssistant) -> None:
     """The reloaded thermostat must find the factory."""
+    add_vtherm(hass, "vt-other")
     add_vtherm(hass, "vt-living")
     seen = []
 
@@ -72,6 +75,7 @@ async def test_the_factory_is_registered_before_the_thermostat_is_reloaded(hass:
 
 async def test_setting_the_entry_up_again_does_not_reload_the_thermostat(hass: HomeAssistant, reload: AsyncMock) -> None:
     """Changing the options sets the entry up again, and the options are read when used: the thermostat is left alone."""
+    add_vtherm(hass, "vt-other")
     add_vtherm(hass, "vt-living")
     entry = add_plugin_entry(hass, "vt-living")
     assert await async_setup_entry(hass, entry)
@@ -105,6 +109,7 @@ async def test_an_entry_for_an_unknown_thermostat_reloads_nothing(hass: HomeAssi
 
 async def test_removing_an_entry_reloads_its_thermostat_once_it_is_gone(hass: HomeAssistant) -> None:
     """The thermostat is reloaded to drop its manager, after the entry has left the list: else the new manager would still find it."""
+    add_vtherm(hass, "vt-other")
     add_vtherm(hass, "vt-living")
     entry = add_plugin_entry(hass, "vt-living")
     still_listed = []
@@ -129,6 +134,7 @@ async def test_removing_an_entry_reloads_its_thermostat_once_it_is_gone(hass: Ho
 
 async def test_an_entry_which_is_added_again_reloads_its_thermostat_again(hass: HomeAssistant, reload: AsyncMock) -> None:
     """Removing an entry forgets that it was set up."""
+    add_vtherm(hass, "vt-other")
     add_vtherm(hass, "vt-living")
     entry = add_plugin_entry(hass, "vt-living")
     assert await async_setup_entry(hass, entry)

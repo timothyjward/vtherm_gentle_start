@@ -8,6 +8,7 @@
 | `custom_components/vtherm_gentle_start/manager.py` | The feature manager: connects the ramp to VTherm through the plugin API and publishes the attributes. |
 | `custom_components/vtherm_gentle_start/factory.py` | Decides which thermostats the plugin supports. |
 | `custom_components/vtherm_gentle_start/sensor.py` | The adjustment sensor. |
+| `custom_components/vtherm_gentle_start/registration.py` | Registers the factory, and restores it when Versatile Thermostat drops its API object with its last thermostat. |
 | `custom_components/vtherm_gentle_start/config_flow.py` | The configuration and reconfiguration flows. |
 | `custom_components/vtherm_gentle_start/__init__.py` | Registers the factory and reloads the target thermostat when an entry is added or removed. |
 | `custom_components/vtherm_gentle_start/brand/` | The brand images used by Home Assistant. |

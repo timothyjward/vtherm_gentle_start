@@ -10,6 +10,7 @@ from .const import (
     FEATURE_MANAGER_GENTLE_START,
 )
 from .manager import GentleStartFeatureManager
+from .registration import watch
 
 if TYPE_CHECKING:
     from vtherm_api.interfaces import InterfaceFeatureManager, InterfaceThermostatRuntime
@@ -38,4 +39,6 @@ class GentleStartManagerFactory:
 
     def create(self, thermostat: "InterfaceThermostatRuntime") -> "InterfaceFeatureManager":
         """Create a manager bound to the runtime thermostat."""
+        # A thermostat entry which is created after the plugin is not watched yet: it may be the only one one day
+        watch(thermostat.hass, thermostat.hass.config_entries.async_get_entry(thermostat.unique_id))
         return GentleStartFeatureManager(thermostat, thermostat.hass)

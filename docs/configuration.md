@@ -8,7 +8,7 @@ One entry is created per thermostat. A thermostat without an entry is not ramped
 
 ![The integration page, with the entry of a thermostat and its Gentle Start device](images/integration-page.png)
 
-* Adding or deleting an entry reloads that thermostat, so that it takes the change up at once. Nothing else needs a restart, with one exception: if that thermostat is your only Versatile Thermostat entry, restart Home Assistant after adding the entry (see [Limitations](limitations.md)).
+* Adding or deleting an entry reloads that thermostat, so that it takes the change up at once. Nothing else needs a restart. Releases up to `0.0.2` need one when the thermostat is your only Versatile Thermostat entry (see [Limitations](limitations.md)).
 * The options can be changed later with **Reconfigure**, from the menu of the entry. VTherm reads them when it needs them, so nothing is reloaded.
 
 * Only `over_climate` thermostats without direct valve regulation are offered. A direct valve regulation drives the valve opening, not a setpoint.

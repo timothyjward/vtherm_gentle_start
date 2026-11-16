@@ -13,7 +13,7 @@
 * The thermostat is not an `over_climate`, or it regulates a valve directly. The plugin does not support it, and the entry cannot target it.
 * Home Assistant has not been restarted since the plugin was installed. Restart it.
 * The entry was added while the thermostat was not loaded. Reload the thermostat, or restart Home Assistant.
-* The thermostat is your only Versatile Thermostat entry. Reloading it removes the plugin until Home Assistant restarts, so restart after adding the entry ([Limitations](limitations.md)). A restart is also the check: if the attribute is there afterwards, the plugin was only detached.
+* The thermostat is your only Versatile Thermostat entry and the plugin is `0.0.2` or older. Reloading it removes the plugin until Home Assistant restarts ([Limitations](limitations.md)): update the plugin, or restart. If the attribute is there after a restart, the plugin was only detached.
 
 ## `ramp_value` stays empty
 

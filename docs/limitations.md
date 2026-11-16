@@ -13,11 +13,14 @@
 
 ## Reloading the only thermostat
 
-When Versatile Thermostat `10.6.4` unloads a thermostat entry and no other thermostat entry remains, it removes its API object, and the Gentle Start registration with it. The plugin then stays detached until Home Assistant restarts.
+Versatile Thermostat `10.6.4` keeps the registration of the plugins in an API object, and drops that object when its last thermostat entry is unloaded. A thermostat which is the only entry of Versatile Thermostat would lose the plugin each time it is reloaded.
 
-* **Adding or removing the Gentle Start entry** reloads the target thermostat so that it takes the change up at once. With a single Versatile Thermostat entry the reload removes the registration, so after adding an entry the thermostat shows no `gentle_start` attribute and no ramp. Restart Home Assistant after adding the entry.
-* **Reloading or reconfiguring the only thermostat** has the same effect, whether or not it has a Gentle Start entry: restart Home Assistant afterwards.
-* **With two or more thermostat entries** the API object is kept, so the thermostat takes up the change at once. This follows from the code of `10.6.4`: it removes the API object only when no other entry remains.
+The plugin restores its registration, so that nothing needs a restart:
+
+* **Adding or removing the Gentle Start entry** reloads the target thermostat. When it is the only thermostat entry, the plugin unloads it, registers again with a new API object, and sets it up again.
+* **Reloading or reconfiguring the only thermostat**, which Versatile Thermostat does itself, brings it back without the plugin. The plugin sees it loaded without its registration and reloads it once more, a few seconds later. A thermostat which is not the only entry is not affected.
+
+Releases up to `0.0.2` do not do this: restart Home Assistant after adding the entry to the only thermostat, or after changing its options.
 
 ## Dependencies
 
