@@ -2,11 +2,14 @@
 
 All notable changes of the plugin are listed here, newest first. The version is the tag of the release.
 
-## Unreleased
+## 1.0.0 (2026-11-16)
+
+First release which is not a pre-release.
 
 * Documentation moved to the `docs` folder: installation, configuration, how it works, attributes and sensor, reducing API calls, troubleshooting, limitations and development. The README is now an overview with links.
 * The documentation has screenshots taken from a local Home Assistant with Versatile Thermostat `10.6.4`, and the commands sent at a switch-on are counted from measured service calls: four fixed commands with the plugin, three without it.
 * Fixed the plugin being lost when the only Versatile Thermostat entry is reloaded. Versatile Thermostat `10.6.4` drops its API object, and the plugin registration with it, when its last entry is unloaded. The plugin now registers again before the thermostat is set up, and reloads a thermostat which comes back without it, so adding the Gentle Start entry or changing the options of a single thermostat no longer needs a restart.
+* Hid the default branch in HACS (`hide_default_branch`), so that HACS never falls back to `main` and fails to download the zip of a release.
 
 ## 0.0.2
 

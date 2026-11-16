@@ -16,7 +16,7 @@ The room is at 18 degrees and the target is 21 degrees. With the defaults, heati
 ## Quick start
 
 * Requirements: Home Assistant `2025.8.0` or later, Versatile Thermostat `10.6.4` or later, and `vtherm_api >= 0.8.0`.
-* Install: in HACS, add `https://github.com/timothyjward/vtherm_gentle_start` as a custom repository of the category **Integration**, install **Versatile Thermostat Gentle Start**, and restart Home Assistant. If HACS shows no version, enable **Show beta versions**.
+* Install: in HACS, add `https://github.com/timothyjward/vtherm_gentle_start` as a custom repository of the category **Integration**, install **Versatile Thermostat Gentle Start**, and restart Home Assistant.
 * Configure: add the **Versatile Thermostat Gentle Start** integration, pick an `over_climate` thermostat, and keep the defaults (start offset -0.5, maximum step 1.0).
 * Check: the thermostat shows a `gentle_start` attribute, and a sensor shows how far the ramp is holding the setpoint back.
 
