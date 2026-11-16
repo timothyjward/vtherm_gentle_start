@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-labelledby="t d">
+  <title id="t">Setpoint of the ramp when heating</title>
+  <desc id="d">The room is at 18 degrees and the target is 21 degrees. With the default options the setpoint sent to the device is 17.5 at the switch-on, then 18.5, 19.5 and 20.5, and reaches 21 on the fourth cycle.</desc>
+  <rect width="720" height="320" fill="#ffffff"/>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#333333">
+    <!-- grid and degree labels: 44 pixels per degree, 17 degrees at y=250 -->
+    <g stroke="#e0e0e0" stroke-width="1">
+      <line x1="70" y1="250" x2="680" y2="250"/>
+      <line x1="70" y1="206" x2="680" y2="206"/>
+      <line x1="70" y1="162" x2="680" y2="162"/>
+      <line x1="70" y1="118" x2="680" y2="118"/>
+      <line x1="70" y1="74" x2="680" y2="74"/>
+      <line x1="70" y1="30" x2="680" y2="30"/>
+    </g>
+    <g text-anchor="end">
+      <text x="62" y="254">17</text>
+      <text x="62" y="210">18</text>
+      <text x="62" y="166">19</text>
+      <text x="62" y="122">20</text>
+      <text x="62" y="78">21</text>
+      <text x="62" y="34">22</text>
+    </g>
+    <text x="14" y="140" transform="rotate(-90 14 140)" text-anchor="middle">Setpoint (degrees)</text>
+
+    <!-- room temperature at the switch-on and the target -->
+    <line x1="70" y1="206" x2="680" y2="206" stroke="#757575" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text x="676" y="200" text-anchor="end" fill="#555555">Room at the switch-on: 18</text>
+    <line x1="70" y1="74" x2="680" y2="74" stroke="#2e7d32" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text x="76" y="68" fill="#2e7d32">Target: 21</text>
+
+    <!-- the setpoint sent to the device -->
+    <path d="M100 228 H230 V184 H360 V140 H490 V96 H620 V74 H660" fill="none" stroke="#1a73e8" stroke-width="3"/>
+    <g fill="#1a73e8">
+      <circle cx="100" cy="228" r="4"/>
+      <circle cx="230" cy="184" r="4"/>
+      <circle cx="360" cy="140" r="4"/>
+      <circle cx="490" cy="96" r="4"/>
+      <circle cx="620" cy="74" r="4"/>
+    </g>
+    <g text-anchor="middle" fill="#1a73e8">
+      <text x="165" y="220">17.5</text>
+      <text x="295" y="176">18.5</text>
+      <text x="425" y="132">19.5</text>
+      <text x="555" y="88">20.5</text>
+      <text x="640" y="66">21</text>
+    </g>
+
+    <!-- cycles -->
+    <g text-anchor="middle">
+      <text x="100" y="278">Switch-on</text>
+      <text x="230" y="278">Cycle 1</text>
+      <text x="360" y="278">Cycle 2</text>
+      <text x="490" y="278">Cycle 3</text>
+      <text x="620" y="278">Cycle 4</text>
+    </g>
+    <text x="375" y="304" text-anchor="middle" fill="#555555">Defaults: start offset -0.5, maximum step 1.0</text>
+  </g>
+</svg>
